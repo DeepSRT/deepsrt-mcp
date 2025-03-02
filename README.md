@@ -144,3 +144,20 @@ npm run build
 
 - https://www.threads.net/@pahud/post/DGmIR7gOG5M
 - https://www.threads.net/@pahud/post/DGoGiMDuWa9
+
+
+## FAQ
+
+Q: I am getting `404` error, why?
+
+A: This is because the video summary is not cached in the CDN edge location, you need to open this video using DeepSRT chrome extension to have it cached in the CDN network before you can get that summary using MCP.
+
+You can verify the cache status using cURL like this
+
+```sh
+curl -s 'https://worker.deepsrt.com/transcript' \
+-i --data '{"arg":"v=VafNvIcOs5w","action":"summarize","lang":"zh-tw","mode":"narrative"}' | grep -i "^cache-status"
+cache-status: HIT
+```
+
+If you see `cache-status: HIT` the content is cached in the CDN edge location and your MCP server shoud not get `404`.
