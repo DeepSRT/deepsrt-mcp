@@ -2,6 +2,10 @@
 
 A Model Context Protocol (MCP) server that provides YouTube video summarization functionality through integration with DeepSRT's API.
 
+<a href="https://glama.ai/mcp/servers/5o885ibi5m">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/5o885ibi5m/badge" alt="DeepSRT Server MCP server" />
+</a>
+
 ## Features
 
 - Generate summaries for YouTube videos
