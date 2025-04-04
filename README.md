@@ -1,5 +1,7 @@
 # DeepSRT MCP Server
 
+[![smithery badge](https://smithery.ai/badge/@DeepSRT/deepsrt-mcp)](https://smithery.ai/server/@DeepSRT/deepsrt-mcp)
+
 A Model Context Protocol (MCP) server that provides YouTube video summarization functionality through integration with DeepSRT's API.
 
 ## Features
@@ -54,6 +56,14 @@ sequenceDiagram
 ```
 
 ## Installation
+
+### Installing via Smithery
+
+To install DeepSRT Server for Claude Desktop automatically via [Smithery](https://smithery.ai/server/@DeepSRT/deepsrt-mcp):
+
+```bash
+npx -y @smithery/cli install @DeepSRT/deepsrt-mcp --client claude
+```
 
 ### Installing for Claude Desktop
 
