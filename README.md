@@ -145,6 +145,22 @@ sequenceDiagram
 - **Memory Efficient**: Streaming XML parsing, no large data buffering
 - **Network Optimized**: Single request per video for metadata + captions
 
+## Recent Updates
+
+### v0.1.3 (Latest)
+- ✅ **Fixed CLI argument parsing**: Now supports both `--key=value` and `--key value` formats
+- ✅ **Fixed bullet mode**: `--mode bullet` now works correctly and generates bullet-point summaries
+- ✅ **Improved bunx compatibility**: Direct execution with `bunx @deepsrt/deepsrt-mcp` works without installation
+
+### v0.1.2
+- ✅ **Fixed CLI execution**: Made CLI the default binary for direct npx/bunx execution
+- ✅ **Updated package configuration**: Proper binary resolution for different execution methods
+
+### v0.1.1
+- ✅ **Added comprehensive testing**: Unit tests, integration tests, and end-to-end tests
+- ✅ **Enhanced CLI tool**: Full-featured command-line interface with help and examples
+- ✅ **Direct transcript extraction**: No pre-caching required, works with any YouTube video
+
 ## Features
 
 - Generate summaries for YouTube videos
@@ -216,20 +232,24 @@ sequenceDiagram
 
 The DeepSRT MCP server also provides a convenient CLI interface for direct usage without requiring an MCP client.
 
-### Direct CLI Commands
+### Direct CLI Commands (No Installation Required)
 
 ```bash
-# Extract transcript with timestamps
-npx @deepsrt/deepsrt-mcp get-transcript https://www.youtube.com/watch?v=dQw4w9WgXcQ
-npx @deepsrt/deepsrt-mcp get-transcript dQw4w9WgXcQ --lang en
-
-# Generate video summary
-npx @deepsrt/deepsrt-mcp get-summary dQw4w9WgXcQ --lang zh-tw --mode bullet
-npx @deepsrt/deepsrt-mcp get-summary https://youtu.be/dQw4w9WgXcQ --lang ja
-
-# Using bunx (alternative)
+# Method 1: Direct execution with bunx (recommended - no installation required)
 bunx @deepsrt/deepsrt-mcp get-transcript https://www.youtube.com/watch?v=dQw4w9WgXcQ
+bunx @deepsrt/deepsrt-mcp get-transcript dQw4w9WgXcQ --lang en
 bunx @deepsrt/deepsrt-mcp get-summary dQw4w9WgXcQ --lang zh-tw --mode bullet
+bunx @deepsrt/deepsrt-mcp get-summary https://youtu.be/dQw4w9WgXcQ --lang ja
+
+# Method 2: Install globally for easier access (for frequent use)
+npm install -g @deepsrt/deepsrt-mcp
+deepsrt-mcp get-transcript https://www.youtube.com/watch?v=dQw4w9WgXcQ
+deepsrt-mcp get-summary dQw4w9WgXcQ --lang zh-tw --mode bullet
+
+# Method 3: Install locally and use npx
+npm install @deepsrt/deepsrt-mcp
+npx deepsrt-mcp get-transcript https://www.youtube.com/watch?v=dQw4w9WgXcQ
+npx deepsrt-mcp get-summary dQw4w9WgXcQ --lang zh-tw --mode bullet
 ```
 
 ### Global Installation
@@ -241,40 +261,43 @@ For easier access, install globally:
 npm install -g @deepsrt/deepsrt-mcp
 
 # Then use directly
-deepsrt get-transcript https://youtu.be/dQw4w9WgXcQ --lang en
-deepsrt get-summary dQw4w9WgXcQ --lang zh-tw --mode narrative
+deepsrt-mcp get-transcript https://youtu.be/dQw4w9WgXcQ --lang en
+deepsrt-mcp get-summary dQw4w9WgXcQ --lang zh-tw --mode narrative
 ```
 
 ### CLI Options
 
 #### get-transcript
 ```bash
-deepsrt get-transcript <video-url> [options]
+bunx @deepsrt/deepsrt-mcp get-transcript <video-url> [options]
 
 Options:
   --lang=<language>    Preferred language code for captions (default: en)
+  --lang <language>    Alternative format
                       Examples: en, zh-tw, ja, es, fr
 
 Examples:
-  deepsrt get-transcript https://www.youtube.com/watch?v=dQw4w9WgXcQ
-  deepsrt get-transcript dQw4w9WgXcQ --lang=zh-tw
-  deepsrt get-transcript https://youtu.be/dQw4w9WgXcQ --lang=ja
+  bunx @deepsrt/deepsrt-mcp get-transcript https://www.youtube.com/watch?v=dQw4w9WgXcQ
+  bunx @deepsrt/deepsrt-mcp get-transcript dQw4w9WgXcQ --lang=zh-tw
+  bunx @deepsrt/deepsrt-mcp get-transcript https://youtu.be/dQw4w9WgXcQ --lang ja
 ```
 
 #### get-summary
 ```bash
-deepsrt get-summary <video-url> [options]
+bunx @deepsrt/deepsrt-mcp get-summary <video-url> [options]
 
 Options:
   --lang=<language>    Target language for summary (default: zh-tw)
+  --lang <language>    Alternative format
                       Examples: zh-tw, en, ja, es, fr
   --mode=<mode>        Summary format (default: narrative)
+  --mode <mode>        Alternative format
                       Options: narrative, bullet
 
 Examples:
-  deepsrt get-summary https://www.youtube.com/watch?v=dQw4w9WgXcQ
-  deepsrt get-summary dQw4w9WgXcQ --lang=en --mode=bullet
-  deepsrt get-summary https://youtu.be/dQw4w9WgXcQ --lang=ja --mode=narrative
+  bunx @deepsrt/deepsrt-mcp get-summary https://www.youtube.com/watch?v=dQw4w9WgXcQ
+  bunx @deepsrt/deepsrt-mcp get-summary dQw4w9WgXcQ --lang=en --mode=bullet
+  bunx @deepsrt/deepsrt-mcp get-summary https://youtu.be/dQw4w9WgXcQ --lang ja --mode narrative
 ```
 
 ### Supported URL Formats
@@ -298,8 +321,9 @@ dQw4w9WgXcQ
 
 ### CLI Features
 
-- **Direct execution**: No MCP client required
+- **Direct execution**: No installation required with `bunx`
 - **Multiple URL formats**: Full URLs, short URLs, or direct video IDs
+- **Flexible argument formats**: Both `--key=value` and `--key value` formats supported
 - **Language support**: Specify target language for summaries and transcript preferences
 - **Summary modes**: Choose between narrative or bullet-point formats
 - **Rich output**: Colored console output with progress indicators
@@ -323,7 +347,7 @@ dQw4w9WgXcQ
 ...
 ```
 
-#### Summary Output
+#### Summary Output (Narrative Mode)
 ```
 # 瑞克·艾斯利 - 永遠不會放棄你
 
@@ -337,30 +361,51 @@ dQw4w9WgXcQ
 這是一首經典的流行歌曲，表達了對愛情的承諾和忠誠...
 ```
 
-## Installation
+#### Summary Output (Bullet Mode)
+```
+# How Robots Are Helping Amazon Deliver on Prime Day
 
-### Option 1: Direct CLI Usage with npx (Recommended)
+**Author:** Bloomberg Television  
+**Duration:** 5:45  
+**Language:** zh-tw  
+**Mode:** bullet
 
-Use the CLI directly without installation:
+## Summary
 
-```bash
-# Get transcript
-npx @deepsrt/deepsrt-mcp get-transcript https://www.youtube.com/watch?v=dQw4w9WgXcQ
+本影片主要探討亞馬遜如何運用機器人技術來提升倉儲效率...
 
-# Get summary in Traditional Chinese
-npx @deepsrt/deepsrt-mcp get-summary dQw4w9WgXcQ --lang zh-tw --mode bullet
+# 機器人技術在亞馬遜倉儲的應用與效益
 
-# Install globally for easier access
-npm install -g @deepsrt/deepsrt-mcp
-deepsrt get-transcript https://youtu.be/dQw4w9WgXcQ --lang en
+  - 亞馬遜已部署了第一百萬個機器人，並在Prime Day等高峰期用於滿足訂單需求 [00:00:00]
+  - 機器人旨在為員工提供安全且高生產力的工作環境 [00:00:30]
+  - 移動機器人可以搬運超過一千磅的貨物，並移動貨架以減少員工的行走距離 [00:00:54]
+...
 ```
 
-### Option 2: Direct Usage with bunx (Alternative)
+## Installation
+
+### Option 1: Direct CLI Usage with bunx (Recommended - No Installation Required)
+
+Use the CLI directly without any installation:
 
 ```bash
-# Using Bun package manager
+# Direct execution with bunx (recommended)
 bunx @deepsrt/deepsrt-mcp get-transcript https://www.youtube.com/watch?v=dQw4w9WgXcQ
 bunx @deepsrt/deepsrt-mcp get-summary dQw4w9WgXcQ --lang zh-tw --mode bullet
+
+# Always uses latest version automatically
+bunx @deepsrt/deepsrt-mcp@latest get-transcript dQw4w9WgXcQ --lang en
+```
+
+### Option 2: Global Installation (For Frequent Use)
+
+```bash
+# Install globally for easier access
+npm install -g @deepsrt/deepsrt-mcp
+
+# Then use directly with shorter command
+deepsrt-mcp get-transcript https://www.youtube.com/watch?v=dQw4w9WgXcQ
+deepsrt-mcp get-summary dQw4w9WgXcQ --lang zh-tw --mode bullet
 ```
 
 ### Option 3: Installing for Claude Desktop (Node.js)
@@ -418,7 +463,7 @@ Once published to npm, you can run the MCP server directly without local install
       "args": [
         "--bun",
         "@deepsrt/deepsrt-mcp",
-        "deepsrt-mcp"
+        "deepsrt-mcp-server"
       ]
     }
   }
@@ -434,10 +479,11 @@ Or using npx with Node.js:
       "command": "npx",
       "args": [
         "@deepsrt/deepsrt-mcp",
-        "deepsrt-mcp"
+        "deepsrt-mcp-server"
       ]
     }
   }
+}
 }
 ```
 
