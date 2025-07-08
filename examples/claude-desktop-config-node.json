@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "deepsrt-mcp": {
+      "command": "node",
+      "args": [
+        "/path/to/deepsrt-mcp/build/index.js"
+      ]
+    }
+  }
+}

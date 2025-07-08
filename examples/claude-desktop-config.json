@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "deepsrt-mcp": {
+      "command": "bun",
+      "args": [
+        "/path/to/deepsrt-mcp/src/index.ts"
+      ]
+    }
+  }
+}

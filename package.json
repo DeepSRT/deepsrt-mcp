@@ -1,27 +1,59 @@
 {
-  "name": "deepsrt-mcp",
+  "name": "@deepsrt/deepsrt-mcp",
   "version": "0.1.0",
-  "description": "DeepSRT MCP Server",
-  "private": true,
+  "description": "DeepSRT MCP Server - YouTube video summarization and transcript extraction",
   "type": "module",
   "bin": {
+    "deepsrt": "./build/cli.js",
     "deepsrt-mcp": "./build/index.js"
   },
   "files": [
-    "build"
+    "build",
+    "src",
+    "examples"
   ],
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "youtube",
+    "transcript",
+    "summary",
+    "deepsrt"
+  ],
+  "author": "DeepSRT",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DeepSRT/deepsrt-mcp.git"
+  },
+  "homepage": "https://github.com/DeepSRT/deepsrt-mcp",
+  "bugs": {
+    "url": "https://github.com/DeepSRT/deepsrt-mcp/issues"
+  },
   "scripts": {
-    "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
+    "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755'); require('fs').chmodSync('build/cli.js', '755')\"",
     "prepare": "npm run build",
+    "prepublishOnly": "npm run build",
+    "test": "bun test --exclude='**/e2e.test.ts' --exclude='**/transcript.test.ts'",
+    "test:unit": "bun test src/index.test.ts src/integration.test.ts",
+    "test:network": "bun test src/transcript.test.ts src/e2e.test.ts",
+    "test:all": "bun test",
+    "test:watch": "bun test --watch",
+    "test:ci": "bun test --reporter=junit --exclude='**/e2e.test.ts' --exclude='**/transcript.test.ts'",
     "watch": "tsc --watch",
-    "inspector": "npx @modelcontextprotocol/inspector build/index.js"
+    "inspector": "npx @modelcontextprotocol/inspector build/index.js",
+    "dev": "bun src/index.ts",
+    "start:bun": "bun src/index.ts",
+    "start:node": "node build/index.js"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "0.6.0",
     "axios": "^1.8.1"
   },
   "devDependencies": {
+    "@types/bun": "latest",
     "@types/node": "^20.11.24",
+    "bun-types": "^1.2.18",
     "typescript": "^5.3.3"
   }
 }

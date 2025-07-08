@@ -28,3 +28,74 @@ yarn-error.log*
 
 # Test coverage
 coverage/
+.nyc_output/
+junit.xml
+
+# Lock files (optional - some projects prefer to track these)
+# bun.lock
+# yarn.lock
+
+# Amazon Q context files
+amazonq-context*
+
+# MCP specific
+*.mcp
+mcp-settings.json
+claude_desktop_config.json
+cline_mcp_settings.json
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# parcel-bundler cache (https://parceljs.org/)
+.parcel-cache/
+
+# Temporary folders
+tmp/
+temp/
+
+# Video/audio files (in case someone tests with local files)
+*.mp4
+*.mp3
+*.wav
+*.avi
+*.mov
+*.mkv
+
+# Downloaded transcripts/summaries (testing artifacts)
+transcript-*.txt
+summary-*.txt
+test-output/
