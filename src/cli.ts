@@ -109,17 +109,41 @@ class DeepSRTCLI {
   private parseXMLTranscript(xmlContent: string): Array<{timestamp: string, text: string}> {
     const result: Array<{timestamp: string, text: string}> = [];
     
-    // Handle YouTube's timedtext format with <p> tags
+    // Handle YouTube's timedtext format
     if (xmlContent.includes('<timedtext')) {
-      const pRegex = /<p[^>]*t="(\d+)"[^>]*>(.*?)<\/p>/g;
+      // Extract the body content
+      const bodyMatch = xmlContent.match(/<body>(.*?)<\/body>/s);
+      if (!bodyMatch) return result;
+      
+      const bodyContent = bodyMatch[1];
+      
+      // Split by <p> tags to get segments
+      const pTagRegex = /<p[^>]*t="(\d+)"[^>]*>/g;
+      const matches = [];
       let match;
       
-      while ((match = pRegex.exec(xmlContent)) !== null) {
-        const startMs = parseInt(match[1]);
-        let textContent = match[2];
+      // Collect all <p> tag matches with their positions
+      while ((match = pTagRegex.exec(bodyContent)) !== null) {
+        matches.push({
+          time: parseInt(match[1]),
+          index: match.index + match[0].length,
+          fullMatch: match[0]
+        });
+      }
+      
+      // Process each segment
+      for (let i = 0; i < matches.length; i++) {
+        const currentMatch = matches[i];
+        const nextMatch = matches[i + 1];
         
-        // Remove <s> tags if present (word-level timing)
-        textContent = textContent.replace(/<\/?s[^>]*>/g, '');
+        // Extract text from current position to next <p> tag or end
+        const startIndex = currentMatch.index;
+        const endIndex = nextMatch ? nextMatch.index - nextMatch.fullMatch.length : bodyContent.length;
+        
+        let textContent = bodyContent.substring(startIndex, endIndex);
+        
+        // Remove </p> tags
+        textContent = textContent.replace(/<\/p>/g, '');
         
         // Decode HTML entities
         textContent = textContent
@@ -134,7 +158,7 @@ class DeepSRTCLI {
         
         // Skip empty or music-only segments
         if (textContent && !textContent.match(/^\[.*\]$/) && textContent !== '♪♪♪') {
-          const timestamp = this.formatTimestamp(startMs);
+          const timestamp = this.formatTimestamp(currentMatch.time);
           result.push({ timestamp, text: textContent });
         }
       }
@@ -331,26 +355,28 @@ function parseArgs() {
   const args = process.argv.slice(2);
   
   if (args.length === 0) {
-    console.log(`🚀 DeepSRT CLI Tool v1.0.0\n`);
+    console.log(`🚀 DeepSRT CLI Tool v1.0.4\n`);
     console.log(`Usage:`);
     console.log(`  npx @deepsrt/deepsrt-mcp get-transcript <youtube-url> [--lang=<lang>]`);
     console.log(`  npx @deepsrt/deepsrt-mcp get-summary <youtube-url> [--lang=<lang>] [--mode=<mode>]`);
-    console.log(`  deepsrt get-transcript <youtube-url> [--lang=<lang>]  (if installed globally)`);
-    console.log(`  deepsrt get-summary <youtube-url> [--lang=<lang>] [--mode=<mode>]  (if installed globally)\n`);
+    console.log(`  deepsrt-mcp get-transcript <youtube-url> [--lang=<lang>]  (if installed globally)\n`);
     console.log(`Commands:`);
     console.log(`  get-transcript    Extract transcript with timestamps`);
     console.log(`  get-summary       Generate video summary\n`);
     console.log(`Options:`);
     console.log(`  --lang=<lang>     Target language (default: en for transcript, zh-tw for summary)`);
     console.log(`  --mode=<mode>     Summary mode: narrative|bullet (default: narrative)\n`);
+    console.log(`Installation:`);
+    console.log(`  npm install -g @deepsrt/deepsrt-mcp  # Global installation (recommended)`);
+    console.log(`  npm install @deepsrt/deepsrt-mcp     # Local installation\n`);
     console.log(`Examples:`);
     console.log(`  npx @deepsrt/deepsrt-mcp get-transcript https://www.youtube.com/watch?v=dQw4w9WgXcQ`);
     console.log(`  npx @deepsrt/deepsrt-mcp get-transcript dQw4w9WgXcQ --lang=en`);
     console.log(`  npx @deepsrt/deepsrt-mcp get-summary dQw4w9WgXcQ --lang=zh-tw --mode=bullet`);
-    console.log(`  npx @deepsrt/deepsrt-mcp get-summary https://youtu.be/dQw4w9WgXcQ --lang=ja`);
-    console.log(`\n  # After global installation:`);
-    console.log(`  deepsrt get-transcript https://www.youtube.com/watch?v=dQw4w9WgXcQ`);
-    console.log(`  deepsrt get-summary dQw4w9WgXcQ --lang=zh-tw --mode=bullet`);
+    console.log(`  npx @deepsrt/deepsrt-mcp get-summary https://youtu.be/dQw4w9WgXcQ --lang=ja\n`);
+    console.log(`  # After global installation:`);
+    console.log(`  deepsrt-mcp get-transcript https://www.youtube.com/watch?v=dQw4w9WgXcQ`);
+    console.log(`  deepsrt-mcp get-summary dQw4w9WgXcQ --lang=zh-tw --mode=bullet`);
     process.exit(1);
   }
 
@@ -368,13 +394,30 @@ function parseArgs() {
 
   for (let i = 2; i < args.length; i++) {
     const arg = args[i];
+    
+    // Handle --lang=value format
     if (arg.startsWith('--lang=')) {
       lang = arg.split('=')[1];
-    } else if (arg.startsWith('--mode=')) {
+    }
+    // Handle --lang value format
+    else if (arg === '--lang' && i + 1 < args.length) {
+      lang = args[i + 1];
+      i++; // Skip next argument since we consumed it
+    }
+    // Handle --mode=value format
+    else if (arg.startsWith('--mode=')) {
       const modeValue = arg.split('=')[1];
       if (modeValue === 'narrative' || modeValue === 'bullet') {
         mode = modeValue;
       }
+    }
+    // Handle --mode value format
+    else if (arg === '--mode' && i + 1 < args.length) {
+      const modeValue = args[i + 1];
+      if (modeValue === 'narrative' || modeValue === 'bullet') {
+        mode = modeValue;
+      }
+      i++; // Skip next argument since we consumed it
     }
   }
 

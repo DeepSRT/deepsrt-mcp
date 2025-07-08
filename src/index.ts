@@ -44,7 +44,7 @@ class DeepSRTServer {
     this.server = new Server(
       {
         name: 'deepsrt-mcp',
-        version: '0.1.0',
+        version: '0.1.4',
       },
       {
         capabilities: {
@@ -402,17 +402,41 @@ ${parsedTranscript.map(segment => `${segment.timestamp} ${segment.text}`).join('
   private parseXMLTranscript(xmlContent: string): Array<{timestamp: string, text: string}> {
     const result: Array<{timestamp: string, text: string}> = [];
     
-    // Handle YouTube's timedtext format with <p> tags
+    // Handle YouTube's timedtext format
     if (xmlContent.includes('<timedtext')) {
-      const pRegex = /<p[^>]*t="(\d+)"[^>]*>(.*?)<\/p>/g;
+      // Extract the body content
+      const bodyMatch = xmlContent.match(/<body>(.*?)<\/body>/s);
+      if (!bodyMatch) return result;
+      
+      const bodyContent = bodyMatch[1];
+      
+      // Split by <p> tags to get segments
+      const pTagRegex = /<p[^>]*t="(\d+)"[^>]*>/g;
+      const matches = [];
       let match;
       
-      while ((match = pRegex.exec(xmlContent)) !== null) {
-        const startMs = parseInt(match[1]);
-        let textContent = match[2];
+      // Collect all <p> tag matches with their positions
+      while ((match = pTagRegex.exec(bodyContent)) !== null) {
+        matches.push({
+          time: parseInt(match[1]),
+          index: match.index + match[0].length,
+          fullMatch: match[0]
+        });
+      }
+      
+      // Process each segment
+      for (let i = 0; i < matches.length; i++) {
+        const currentMatch = matches[i];
+        const nextMatch = matches[i + 1];
         
-        // Remove <s> tags if present (word-level timing)
-        textContent = textContent.replace(/<\/?s[^>]*>/g, '');
+        // Extract text from current position to next <p> tag or end
+        const startIndex = currentMatch.index;
+        const endIndex = nextMatch ? nextMatch.index - nextMatch.fullMatch.length : bodyContent.length;
+        
+        let textContent = bodyContent.substring(startIndex, endIndex);
+        
+        // Remove </p> tags
+        textContent = textContent.replace(/<\/p>/g, '');
         
         // Decode HTML entities
         textContent = textContent
@@ -427,7 +451,7 @@ ${parsedTranscript.map(segment => `${segment.timestamp} ${segment.text}`).join('
         
         // Skip empty or music-only segments
         if (textContent && !textContent.match(/^\[.*\]$/) && textContent !== '♪♪♪') {
-          const timestamp = this.formatTimestamp(startMs);
+          const timestamp = this.formatTimestamp(currentMatch.time);
           result.push({ timestamp, text: textContent });
         }
       }

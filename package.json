@@ -1,12 +1,13 @@
 {
   "name": "@deepsrt/deepsrt-mcp",
-  "version": "0.1.0",
+  "version": "0.1.4",
   "description": "DeepSRT MCP Server - YouTube video summarization and transcript extraction",
   "type": "module",
   "bin": {
-    "deepsrt": "./build/cli.js",
-    "deepsrt-mcp": "./build/index.js"
+    "deepsrt": "build/cli.js",
+    "deepsrt-mcp": "build/index.js"
   },
+  "main": "build/index.js",
   "files": [
     "build",
     "src",
@@ -24,7 +25,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/DeepSRT/deepsrt-mcp.git"
+    "url": "git+https://github.com/DeepSRT/deepsrt-mcp.git"
   },
   "homepage": "https://github.com/DeepSRT/deepsrt-mcp",
   "bugs": {
