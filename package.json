@@ -1,11 +1,11 @@
 {
   "name": "@deepsrt/deepsrt-mcp",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "DeepSRT MCP Server - YouTube video summarization and transcript extraction",
   "type": "module",
   "bin": {
-    "deepsrt": "build/cli.js",
-    "deepsrt-mcp": "build/index.js"
+    "deepsrt-mcp": "build/cli.js",
+    "deepsrt-mcp-server": "build/index.js"
   },
   "main": "build/index.js",
   "files": [
