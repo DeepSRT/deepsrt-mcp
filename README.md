@@ -178,6 +178,10 @@ sequenceDiagram
 - ✅ **Enhanced CLI tool**: Full-featured command-line interface with help and examples
 - ✅ **Direct transcript extraction**: No pre-caching required, works with any YouTube video
 
+<a href="https://glama.ai/mcp/servers/5o885ibi5m">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/5o885ibi5m/badge" alt="DeepSRT Server MCP server" />
+</a>
+
 ## Features
 
 - Generate summaries for YouTube videos
