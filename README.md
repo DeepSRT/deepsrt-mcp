@@ -2,7 +2,7 @@
 
 A Model Context Protocol (MCP) server that provides YouTube video summarization and transcript extraction functionality through integration with DeepSRT's API and direct YouTube caption access.
 
-## TL;DR;
+## TL;DR
 
 ```json
 {
