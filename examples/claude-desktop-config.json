@@ -1,9 +1,11 @@
 {
   "mcpServers": {
-    "deepsrt-mcp": {
-      "command": "bun",
+    "deepsrt": {
+      "type": "stdio",
+      "command": "bunx",
       "args": [
-        "/path/to/deepsrt-mcp/src/index.ts"
+        "@deepsrt/deepsrt-mcp@latest",
+        "--server"
       ]
     }
   }

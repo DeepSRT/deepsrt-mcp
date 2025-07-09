@@ -9,6 +9,7 @@
  */
 
 import axios from 'axios';
+import { VERSION } from './version.js';
 
 type SummaryMode = 'narrative' | 'bullet';
 
@@ -355,7 +356,7 @@ function parseArgs() {
   const args = process.argv.slice(2);
   
   if (args.length === 0) {
-    console.log(`🚀 DeepSRT CLI Tool v1.0.4\n`);
+    console.log(`🚀 DeepSRT CLI Tool v${VERSION}\n`);
     console.log(`Usage:`);
     console.log(`  npx @deepsrt/deepsrt-mcp get-transcript <youtube-url> [--lang=<lang>]`);
     console.log(`  npx @deepsrt/deepsrt-mcp get-summary <youtube-url> [--lang=<lang>] [--mode=<mode>]`);

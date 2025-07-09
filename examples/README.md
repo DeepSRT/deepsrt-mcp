@@ -1,41 +1,42 @@
-# Examples
+# DeepSRT MCP Configuration Examples
 
-This directory contains example implementations and reference code for the DeepSRT MCP server.
+This directory contains example configuration files for different MCP clients.
 
-## Standalone Summarizer (`standalone-summarizer.ts`)
+## Claude Desktop
 
-A standalone TypeScript script that demonstrates direct usage of the YouTube InnerTube API and DeepSRT API integration without the MCP framework.
+File: `claude-desktop-config.json`
 
-### Usage
+Add this to your Claude Desktop configuration:
+- On macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- On Windows: `%APPDATA%/Claude/claude_desktop_config.json`
 
-```bash
-# Basic usage
-bun run examples/standalone-summarizer.ts https://www.youtube.com/watch?v=dQw4w9WgXcQ
+## Cline
 
-# With options
-bun run examples/standalone-summarizer.ts --lang=zh-tw --mode=bullet dQw4w9WgXcQ
+File: `cline_mcp_settings.json`
 
-# Transcript only mode
-bun run examples/standalone-summarizer.ts --transcript https://youtu.be/dQw4w9WgXcQ
+Add this to your Cline MCP settings file.
+
+## Unified Configuration
+
+All examples use the same unified configuration:
+
+```json
+{
+  "mcpServers": {
+    "deepsrt": {
+      "type": "stdio",
+      "command": "bunx",
+      "args": [
+        "@deepsrt/deepsrt-mcp@latest",
+        "--server"
+      ]
+    }
+  }
+}
 ```
 
-### Features
-
-- Direct YouTube InnerTube API integration
-- DeepSRT API summarization
-- Multiple language support
-- Transcript extraction with timestamps
-- Standalone execution (no MCP required)
-
-### Purpose
-
-This example shows:
-- How to extract video information from YouTube
-- How to select and fetch caption tracks
-- How to parse YouTube's timedtext XML format
-- How to integrate with DeepSRT's summarization API
-- Implementation patterns used in the main MCP server
-
-### Note
-
-For production use, prefer the main CLI tool (`npx @deepsrt/deepsrt-mcp`) which provides better error handling, structured output, and npm integration.
+This configuration:
+- ✅ **No installation required** - Uses bunx to run directly from npm
+- ✅ **Always latest version** - `@latest` ensures you get updates
+- ✅ **Cross-platform** - Works on macOS, Windows, and Linux
+- ✅ **Simple and clean** - Single configuration for all clients

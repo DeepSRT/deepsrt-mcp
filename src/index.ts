@@ -11,6 +11,7 @@ import {
 
 import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import axios from 'axios';
+import { VERSION } from './version.js';
 
 type SummaryMode = 'narrative' | 'bullet';
 
@@ -44,7 +45,7 @@ class DeepSRTServer {
     this.server = new Server(
       {
         name: 'deepsrt-mcp',
-        version: '0.1.4',
+        version: VERSION,
       },
       {
         capabilities: {
@@ -498,7 +499,7 @@ ${parsedTranscript.map(segment => `${segment.timestamp} ${segment.text}`).join('
   async run() {
     const transport = new StdioServerTransport();
     await this.server.connect(transport);
-    console.error('DeepSRT MCP server running on stdio');
+    // MCP server is now running silently on stdio
   }
 }
 

@@ -2,6 +2,23 @@
 
 A Model Context Protocol (MCP) server that provides YouTube video summarization and transcript extraction functionality through integration with DeepSRT's API and direct YouTube caption access.
 
+## TL;DR;
+
+```json
+{
+  "mcpServers": {
+    "deepsrt": {
+      "type": "stdio",
+      "command": "bunx",
+      "args": [
+        "@deepsrt/deepsrt-mcp@latest",
+        "--server"
+      ]
+    }
+  }
+}
+```
+
 ## Architecture
 
 ```mermaid
@@ -230,26 +247,33 @@ sequenceDiagram
 
 ## CLI Usage
 
-The DeepSRT MCP server also provides a convenient CLI interface for direct usage without requiring an MCP client.
+The DeepSRT MCP server provides a unified interface that handles both MCP server mode and CLI commands.
+
+### Unified Interface
+
+```bash
+# MCP Server Mode (default - for Claude Desktop/Cline)
+bunx @deepsrt/deepsrt-mcp                    # Starts MCP server on stdio
+bunx @deepsrt/deepsrt-mcp --server           # Explicit server mode
+
+# CLI Commands (direct usage)
+bunx @deepsrt/deepsrt-mcp get-transcript <video-url> [options]
+bunx @deepsrt/deepsrt-mcp get-summary <video-url> [options]
+
+# Help
+bunx @deepsrt/deepsrt-mcp --help
+```
 
 ### Direct CLI Commands (No Installation Required)
 
 ```bash
-# Method 1: Direct execution with bunx (recommended - no installation required)
+# Extract transcript with timestamps
 bunx @deepsrt/deepsrt-mcp get-transcript https://www.youtube.com/watch?v=dQw4w9WgXcQ
-bunx @deepsrt/deepsrt-mcp get-transcript dQw4w9WgXcQ --lang en
-bunx @deepsrt/deepsrt-mcp get-summary dQw4w9WgXcQ --lang zh-tw --mode bullet
-bunx @deepsrt/deepsrt-mcp get-summary https://youtu.be/dQw4w9WgXcQ --lang ja
+bunx @deepsrt/deepsrt-mcp get-transcript dQw4w9WgXcQ --lang=en
 
-# Method 2: Install globally for easier access (for frequent use)
-npm install -g @deepsrt/deepsrt-mcp
-deepsrt-mcp get-transcript https://www.youtube.com/watch?v=dQw4w9WgXcQ
-deepsrt-mcp get-summary dQw4w9WgXcQ --lang zh-tw --mode bullet
-
-# Method 3: Install locally and use npx
-npm install @deepsrt/deepsrt-mcp
-npx deepsrt-mcp get-transcript https://www.youtube.com/watch?v=dQw4w9WgXcQ
-npx deepsrt-mcp get-summary dQw4w9WgXcQ --lang zh-tw --mode bullet
+# Generate video summary
+bunx @deepsrt/deepsrt-mcp get-summary dQw4w9WgXcQ --lang=zh-tw --mode=bullet
+bunx @deepsrt/deepsrt-mcp get-summary https://youtu.be/dQw4w9WgXcQ --lang=ja
 ```
 
 ### Global Installation
@@ -260,9 +284,13 @@ For easier access, install globally:
 # Install globally
 npm install -g @deepsrt/deepsrt-mcp
 
-# Then use directly
-deepsrt-mcp get-transcript https://youtu.be/dQw4w9WgXcQ --lang en
-deepsrt-mcp get-summary dQw4w9WgXcQ --lang zh-tw --mode narrative
+# MCP Server Mode
+deepsrt-mcp                                             # Starts MCP server
+deepsrt-mcp --server                                    # Explicit server mode
+
+# CLI Commands
+deepsrt-mcp get-transcript https://youtu.be/dQw4w9WgXcQ --lang=en
+deepsrt-mcp get-summary dQw4w9WgXcQ --lang=zh-tw --mode=narrative
 ```
 
 ### CLI Options
@@ -384,17 +412,21 @@ dQw4w9WgXcQ
 
 ## Installation
 
-### Option 1: Direct CLI Usage with bunx (Recommended - No Installation Required)
+### Option 1: Direct Usage with bunx (Recommended - No Installation Required)
 
-Use the CLI directly without any installation:
+Use the unified interface directly without any installation:
 
 ```bash
-# Direct execution with bunx (recommended)
+# MCP Server Mode (for Claude Desktop/Cline)
+bunx @deepsrt/deepsrt-mcp                    # Default: starts MCP server
+bunx @deepsrt/deepsrt-mcp --server           # Explicit server mode
+
+# CLI Commands (direct usage)
 bunx @deepsrt/deepsrt-mcp get-transcript https://www.youtube.com/watch?v=dQw4w9WgXcQ
-bunx @deepsrt/deepsrt-mcp get-summary dQw4w9WgXcQ --lang zh-tw --mode bullet
+bunx @deepsrt/deepsrt-mcp get-summary dQw4w9WgXcQ --lang=zh-tw --mode=bullet
 
 # Always uses latest version automatically
-bunx @deepsrt/deepsrt-mcp@latest get-transcript dQw4w9WgXcQ --lang en
+bunx @deepsrt/deepsrt-mcp@latest get-transcript dQw4w9WgXcQ --lang=en
 ```
 
 ### Option 2: Global Installation (For Frequent Use)
@@ -408,15 +440,9 @@ deepsrt-mcp get-transcript https://www.youtube.com/watch?v=dQw4w9WgXcQ
 deepsrt-mcp get-summary dQw4w9WgXcQ --lang zh-tw --mode bullet
 ```
 
-### Option 3: Installing for Claude Desktop (Node.js)
+### Option 3: Installing for Claude Desktop (Recommended)
 
-1. First, build the server:
-```bash
-npm install
-npm run build
-```
-
-2. Add the server configuration to your Claude Desktop config file:
+Add this configuration to your Claude Desktop config file:
 
 - On macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
 - On Windows: `%APPDATA%/Claude/claude_desktop_config.json`
@@ -424,66 +450,15 @@ npm run build
 ```json
 {
   "mcpServers": {
-    "deepsrt-mcp": {
-      "command": "node",
-      "args": [
-        "/path/to/deepsrt-mcp/build/index.js"
-      ]
-    }
-  }
-}
-```
-
-### Option 4: Installing for Claude Desktop (Bun - Faster)
-
-If you have Bun installed, you can run the TypeScript source directly without building:
-
-```json
-{
-  "mcpServers": {
-    "deepsrt-mcp": {
-      "command": "bun",
-      "args": [
-        "/path/to/deepsrt-mcp/src/index.ts"
-      ]
-    }
-  }
-}
-```
-
-### Option 5: Installing for Claude Desktop (Published Package - Recommended)
-
-Once published to npm, you can run the MCP server directly without local installation:
-
-```json
-{
-  "mcpServers": {
-    "deepsrt-mcp": {
+    "deepsrt": {
+      "type": "stdio",
       "command": "bunx",
       "args": [
-        "--bun",
-        "@deepsrt/deepsrt-mcp",
-        "deepsrt-mcp-server"
+        "@deepsrt/deepsrt-mcp@latest",
+        "--server"
       ]
     }
   }
-}
-```
-
-Or using npx with Node.js:
-
-```json
-{
-  "mcpServers": {
-    "deepsrt-mcp": {
-      "command": "npx",
-      "args": [
-        "@deepsrt/deepsrt-mcp",
-        "deepsrt-mcp-server"
-      ]
-    }
-  }
-}
 }
 ```
 
@@ -492,17 +467,32 @@ This approach:
 - ✅ **Always uses latest version**
 - ✅ **Automatic updates** when you restart Claude
 - ✅ **Cross-platform compatibility**
-- ✅ **Faster startup** with Bun's TypeScript execution
+- ✅ **Simple and clean configuration**
 
-### Option 6: Installing for Cline
+### Option 4: Installing for Cline
 
-Just ask Cline to install in the chat:
+Add this configuration to your `cline_mcp_settings.json`:
+
+```json
+{
+  "mcpServers": {
+    "deepsrt": {
+      "type": "stdio", 
+      "command": "bunx",
+      "args": [
+        "@deepsrt/deepsrt-mcp@latest",
+        "--server"
+      ]
+    }
+  }
+}
+```
+
+Or just ask Cline to install in the chat:
 
 >"Hey, install this MCP server for me from https://github.com/DeepSRT/deepsrt-mcp"
 
-Cline will auto install `deepsrt-mcp` for you and update your `cline_mcp_settings.json`.
-
-### Option 7: Using bunx (Direct Execution)
+### Option 5: Using bunx (Direct Execution)
 
 You can run the server directly with bunx without installation:
 
@@ -544,14 +534,14 @@ Gets a transcript for a YouTube video with timestamps.
 Using Claude Desktop:
 ```typescript
 // Get video summary
-const summaryResult = await mcp.use_tool("deepsrt-mcp", "get_summary", {
+const summaryResult = await mcp.use_tool("deepsrt", "get_summary", {
   videoId: "dQw4w9WgXcQ",
   lang: "zh-tw",
   mode: "narrative"
 });
 
 // Get video transcript
-const transcriptResult = await mcp.use_tool("deepsrt-mcp", "get_transcript", {
+const transcriptResult = await mcp.use_tool("deepsrt", "get_transcript", {
   videoId: "dQw4w9WgXcQ",
   lang: "en"
 });

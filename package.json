@@ -1,13 +1,12 @@
 {
   "name": "@deepsrt/deepsrt-mcp",
-  "version": "0.1.5",
+  "version": "0.1.8",
   "description": "DeepSRT MCP Server - YouTube video summarization and transcript extraction",
   "type": "module",
   "bin": {
-    "deepsrt-mcp": "build/cli.js",
-    "deepsrt-mcp-server": "build/index.js"
+    "deepsrt-mcp": "build/main.js"
   },
-  "main": "build/index.js",
+  "main": "build/main.js",
   "files": [
     "build",
     "src",
@@ -32,7 +31,9 @@
     "url": "https://github.com/DeepSRT/deepsrt-mcp/issues"
   },
   "scripts": {
-    "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755'); require('fs').chmodSync('build/cli.js', '755')\"",
+    "sync-version": "node scripts/sync-version.js",
+    "prebuild": "npm run sync-version",
+    "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755'); require('fs').chmodSync('build/cli.js', '755'); require('fs').chmodSync('build/main.js', '755')\"",
     "prepare": "npm run build",
     "prepublishOnly": "npm run build",
     "test": "bun test --exclude='**/e2e.test.ts' --exclude='**/transcript.test.ts'",
