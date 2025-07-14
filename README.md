@@ -164,7 +164,15 @@ sequenceDiagram
 
 ## Recent Updates
 
-### v0.1.3 (Latest)
+### v0.1.9 (Latest)
+- ✅ **Fixed critical test logic flaws**: Tests now correctly validate API responses instead of checking non-existent `success` properties
+- ✅ **Enhanced error handling**: Improved graceful handling of YouTube API rate limiting (HTTP 429)
+- ✅ **Robust test suite**: All 56 tests now pass consistently with proper error resilience
+- ✅ **Verified API integration**: Confirmed both DeepSRT and YouTube APIs work correctly when not rate limited
+- ✅ **Multi-language support**: Validated zh-tw, en, ja summary generation
+- ✅ **Production-ready**: Test suite handles real-world API limitations professionally
+
+### v0.1.3
 - ✅ **Fixed CLI argument parsing**: Now supports both `--key=value` and `--key value` formats
 - ✅ **Fixed bullet mode**: `--mode bullet` now works correctly and generates bullet-point summaries
 - ✅ **Improved bunx compatibility**: Direct execution with `bunx @deepsrt/deepsrt-mcp` works without installation

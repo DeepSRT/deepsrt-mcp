@@ -1,6 +1,6 @@
 {
   "name": "@deepsrt/deepsrt-mcp",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "DeepSRT MCP Server - YouTube video summarization and transcript extraction",
   "type": "module",
   "bin": {

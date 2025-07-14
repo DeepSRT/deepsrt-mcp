@@ -5,4 +5,4 @@
  * Auto-generated from package.json - do not edit manually
  * Run 'npm run sync-version' to update this file
  */
-export const VERSION = '0.1.8';
+export const VERSION = '0.1.9';

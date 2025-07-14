@@ -411,49 +411,70 @@ ${parsedTranscript.map(segment => `${segment.timestamp} ${segment.text}`).join('
       
       const bodyContent = bodyMatch[1];
       
-      // Split by <p> tags to get segments
-      const pTagRegex = /<p[^>]*t="(\d+)"[^>]*>/g;
-      const matches = [];
+      // Find all <p> tags with their content
+      const pTagRegex = /<p[^>]*t="(\d+)"[^>]*>(.*?)<\/p>/gs;
       let match;
       
-      // Collect all <p> tag matches with their positions
       while ((match = pTagRegex.exec(bodyContent)) !== null) {
-        matches.push({
-          time: parseInt(match[1]),
-          index: match.index + match[0].length,
-          fullMatch: match[0]
-        });
-      }
-      
-      // Process each segment
-      for (let i = 0; i < matches.length; i++) {
-        const currentMatch = matches[i];
-        const nextMatch = matches[i + 1];
+        const startTime = parseInt(match[1]);
+        const pContent = match[2];
         
-        // Extract text from current position to next <p> tag or end
-        const startIndex = currentMatch.index;
-        const endIndex = nextMatch ? nextMatch.index - nextMatch.fullMatch.length : bodyContent.length;
+        // Skip empty paragraphs or paragraphs with only whitespace/newlines
+        if (!pContent.trim() || pContent.trim() === '') {
+          continue;
+        }
         
-        let textContent = bodyContent.substring(startIndex, endIndex);
+        // Extract text from <s> tags within this paragraph
+        const sTagRegex = /<s[^>]*>(.*?)<\/s>/g;
+        const syllables: string[] = [];
+        let sMatch;
         
-        // Remove </p> tags
-        textContent = textContent.replace(/<\/p>/g, '');
+        while ((sMatch = sTagRegex.exec(pContent)) !== null) {
+          let syllable = sMatch[1];
+          
+          // Decode HTML entities
+          syllable = syllable
+            .replace(/&amp;/g, '&')
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/&quot;/g, '"')
+            .replace(/&#39;/g, "'")
+            .replace(/&nbsp;/g, ' ');
+          
+          syllables.push(syllable);
+        }
         
-        // Decode HTML entities
-        textContent = textContent
-          .replace(/&amp;/g, '&')
-          .replace(/&lt;/g, '<')
-          .replace(/&gt;/g, '>')
-          .replace(/&quot;/g, '"')
-          .replace(/&#39;/g, "'");
-        
-        // Clean up newlines and extra spaces
-        textContent = textContent.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim();
-        
-        // Skip empty or music-only segments
-        if (textContent && !textContent.match(/^\[.*\]$/) && textContent !== '♪♪♪') {
-          const timestamp = this.formatTimestamp(currentMatch.time);
-          result.push({ timestamp, text: textContent });
+        // Reconstruct words from syllables
+        if (syllables.length > 0) {
+          const words: string[] = [];
+          let currentWord = '';
+          
+          for (const syllable of syllables) {
+            if (syllable.startsWith(' ')) {
+              // This syllable starts a new word
+              if (currentWord.trim()) {
+                words.push(currentWord.trim());
+              }
+              currentWord = syllable; // Keep the leading space for now
+            } else {
+              // This syllable continues the current word
+              currentWord += syllable;
+            }
+          }
+          
+          // Don't forget the last word
+          if (currentWord.trim()) {
+            words.push(currentWord.trim());
+          }
+          
+          // Join words with single spaces
+          const fullText = words.join(' ').trim();
+          
+          // Skip music notation and empty segments
+          if (fullText && !fullText.match(/^\[.*\]$/) && fullText !== '♪♪♪' && fullText.trim() !== '') {
+            const timestamp = this.formatTimestamp(startTime);
+            result.push({ timestamp, text: fullText });
+          }
         }
       }
     }
